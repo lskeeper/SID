@@ -25,11 +25,8 @@ public class TCPConnection {
 
   public float duration;
   
-  static final String csvSplit = "\",\"";
-  
-  public TCPConnection(String inputLine) {
+  public TCPConnection(String[] elements) {
     try {
-      String[] elements = inputLine.split(csvSplit);
 //      System.out.println(inputLine.replace("\"",""));
       this.addressA = elements[0].replace("\"", "");
       this.portA = elements[1];
