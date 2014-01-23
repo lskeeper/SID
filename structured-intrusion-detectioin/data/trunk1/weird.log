@@ -1,0 +1,14 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	weird
+#open	2014-01-15-21-48-13
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	name	addl	notice	peer
+#types	time	string	addr	port	addr	port	string	string	bool	string
+1126796500.289420	-	-	-	-	-	bad_IP_checksum	-	F	bro
+1126796570.238699	ChRz5q3axuTfuH4Drc	51.91.57.206	10886	100.20.200.15	80	unescaped_special_URI_char	-	F	bro
+1126796573.238031	ChRz5q3axuTfuH4Drc	51.91.57.206	10886	100.20.200.15	80	HTTP_bad_chunk_size	-	F	bro
+1126796610.594468	CtE0aw3YlVQdN3j66k	100.20.200.128	4565	73.70.190.126	80	bad_TCP_checksum	-	F	bro
+1126797051.619967	CAVKV62x6VfzHwOw33	100.20.140.237	9376	159.83.40.142	80	above_hole_data_without_any_acks	-	F	bro
+#close	2014-01-15-21-48-40

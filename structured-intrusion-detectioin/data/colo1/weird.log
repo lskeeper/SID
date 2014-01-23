@@ -1,0 +1,14 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	weird
+#open	2014-01-15-21-44-49
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	name	addl	notice	peer
+#types	time	string	addr	port	addr	port	string	string	bool	string
+1126796506.005675	CwAGtu3evFn7XOYBFj	100.1.4.252	9397	100.20.1.3	53	dns_changed_number_of_responses	The declared number of responses changed from 1 to 2	F	bro
+1126796570.238936	CiorgAOEhcYHmbe7	51.91.57.206	10886	100.20.200.15	80	unescaped_special_URI_char	-	F	bro
+1126796573.238130	CiorgAOEhcYHmbe7	51.91.57.206	10886	100.20.200.15	80	HTTP_bad_chunk_size	-	F	bro
+1126796610.594837	CZHrRB2MffRfU2bwFf	100.20.200.128	4565	73.70.190.126	80	bad_TCP_checksum	-	F	bro
+1126797051.620139	CIBQFRRlwMohJOZZ1	100.20.140.237	9376	159.83.40.142	80	above_hole_data_without_any_acks	-	F	bro
+#close	2014-01-15-21-45-14

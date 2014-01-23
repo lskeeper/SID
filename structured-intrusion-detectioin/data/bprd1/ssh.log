@@ -1,0 +1,16 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	ssh
+#open	2014-01-15-21-44-54
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	status	direction	client	server
+#types	time	string	addr	port	addr	port	string	enum	string	string
+1126796707.123286	CzZgba38kyJpLXlULc	89.44.100.109	11955	100.20.3.106	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126796739.875505	CTloou2BwBorylRPtg	89.44.100.109	12329	100.20.3.106	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126796836.232657	CRIsbw1tmFHo6O0xb9	89.44.100.109	13172	100.20.3.106	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126797013.279423	CIKWx02MKTsuvC5Nw6	100.1.22.184	61409	100.20.140.132	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126797056.984807	CRCUrwXi4pGhfkxe6	100.1.21.127	61457	100.20.3.132	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126797142.979997	CP99CQ2jN3M6nG8fvg	92.6.85.108	15561	100.20.3.127	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+1126797188.785687	C7hSd92a1fqNK9RA14	92.6.85.108	15729	100.20.3.127	22	success	INBOUND	SSH-2.0-OpenSSH_3.1p1	SSH-1.99-OpenSSH_3.1p1
+#close	2014-01-15-21-45-14
