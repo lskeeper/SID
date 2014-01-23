@@ -14,14 +14,26 @@ public class TCPConnection implements Comparable<TCPConnection> {
   public double startTime;
 
   public double endTime;
+  
+  public String uid;
 
   public String addressA;
+  
+  public int srcIP;
+  
+  public int destIP;
 
   public String addressB;
 
   public String portA;
 
   public String portB;
+  
+  public String protocol;
+  
+  public String service;
+  
+  public int missedBytes;
 
   public int packetNum;
 
@@ -37,27 +49,60 @@ public class TCPConnection implements Comparable<TCPConnection> {
 
   public String network;
 
-  public double relStart;
-
   public double duration;
 
-  public TCPConnection(String[] elements, double firstStartTime, String network) {
+  public String state;
+  
+  public String history;
+
+  public int urgentNum;
+  
+  public int nFileAccess;
+  
+  public int nFTPCommands;
+
+  // Traffic features computed using a 100-connection time window
+  
+  public int sameHostCount;
+
+  public int sameSrvCount;
+
+  public double sameHostSErrorRate;
+  
+  public double sameHostRErrorRate;
+  
+  public double sameHostSameSrvRate;
+  
+  public double sameSrvSErrorRate;
+  
+  public double sameSrvRErrorRate;
+  
+  public double sameSrvDiffHostRate;
+  
+  // The packets each connection covers
+
+  public ArrayList<Packet> coveredPackets;
+  
+  public TCPConnection(String[] elements, String network) {
     try {
-      this.addressA = elements[0].replace("\"", "");
-      this.portA = elements[1];
-      this.addressB = elements[2];
-      this.portB = elements[3];
-      this.packetNum = Integer.parseInt(elements[4]);
-      this.byteNum = Integer.parseInt(elements[5]);
-      this.packetA2B = Integer.parseInt(elements[6]);
-      this.packetB2A = Integer.parseInt(elements[7]);
-      this.byteA2B = Integer.parseInt(elements[8]);
-      this.byteB2A = Integer.parseInt(elements[9]);
-      this.relStart = Double.parseDouble(elements[10]);
-      this.duration = Double.parseDouble(elements[11]);
-      this.startTime = firstStartTime + this.relStart;
-      this.endTime = this.startTime + this.duration;
-      this.network = network;
+        this.startTime = Double.parseDouble(elements[0]);
+        this.uid = elements[1];
+        this.addressA = elements[2];
+        this.portA = elements[3];
+        this.addressB = elements[4];
+        this.portB = elements[5];
+        this.protocol = elements[6];
+        this.service = elements[7];
+        this.duration = Double.parseDouble(elements[8]);
+        this.endTime = this.startTime + this.duration;
+        this.byteA2B = Integer.parseInt(elements[9]);
+        this.byteB2A = Integer.parseInt(elements[10]);
+        this.state = elements[11];
+        this.missedBytes = Integer.parseInt(elements[13]);
+        this.history = elements[14];
+        this.packetA2B = Integer.parseInt(elements[15]);
+        this.packetB2A = Integer.parseInt(elements[17]);
+        this.network = network;
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -78,9 +123,9 @@ public class TCPConnection implements Comparable<TCPConnection> {
 
   }
 
-  public ArrayList<Packet> getCoveredPackets(Connection con) throws SQLException {
+  public void getCoveredPackets(Connection con) throws SQLException {
     Statement st = con.createStatement();
-    ArrayList<Packet> result = new ArrayList<Packet>();
+    this.coveredPackets = new ArrayList<Packet>();
     ResultSet rs = null;
     double startTime = this.startTime;
     double endTime = this.endTime;
@@ -91,20 +136,17 @@ public class TCPConnection implements Comparable<TCPConnection> {
       rs = st.executeQuery(String.format("SELECT id FROM ip WHERE ip='%s'", source_addr));
       rs.next();
       int source_ip = rs.getInt("id");
+      this.srcIP = source_ip;
       rs = st.executeQuery(String.format("SELECT id FROM ip WHERE ip='%s'", dest_addr));
       rs.next();
       int dest_ip = rs.getInt("id");
-
-      // System.out.println(startTime + "\t" + endTime);
+      this.destIP = dest_ip;
       String finalQuery = String
               .format("SELECT * from tcpdump WHERE raw_time BETWEEN %1$f AND %2$f AND network='%3$s' AND ((source_ip=%4$d AND dest_ip=%5$d) OR (source_ip=%5$d AND dest_ip=%4$d))",
                       startTime, endTime, network, source_ip, dest_ip);
-//      long t1 = System.nanoTime();
       rs = st.executeQuery(finalQuery);
-//      long t2 = System.nanoTime();
-//      System.out.println((t2 - t1) * 1E-9);
       while (rs.next()) {
-        result.add(new Packet(rs));
+        this.coveredPackets.add(new Packet(rs));
       }
 
     } catch (SQLException ex) {
@@ -124,6 +166,6 @@ public class TCPConnection implements Comparable<TCPConnection> {
         lgr.log(Level.WARNING, ex.getMessage(), ex);
       }
     }
-    return result;
   }
 }
+ 

@@ -24,11 +24,12 @@ public class CSVFileReader {
 
   public List<String[]> lines;
 
-  public CSVFileReader(String csvFileName, String splitter, Double startTime, String network) {
+  public CSVFileReader(String csvFileName, String splitter, String network) {
     this.csvFile = csvFileName;
     this.splitter = splitter;
-    this.startTime = startTime;
-    this.network = network;
+    if (null != network) {
+      this.network = network;
+    }
     this.parseCSV();
   }
 
@@ -56,35 +57,34 @@ public class CSVFileReader {
       }
     }
     this.lines = result;
-    String[] firstLine = result.get(0);
-    if (firstLine.length == 7) {
-      this.startTime = Double.parseDouble(firstLine[1]);
-    }
-
   }
 
-  public HashMap<String, String> readIpKeyMap(List<String[]> lines) {
-    HashMap<String, String> ipMap = new HashMap<String, String>();
-    for (String[] elements : lines) {
-      try {
-        if (elements.length == 2) {
-          ipMap.put(elements[0], elements[1]);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return ipMap;
-  }
+  // public HashMap<String, String> readIpKeyMap(List<String[]> lines) {
+  // HashMap<String, String> ipMap = new HashMap<String, String>();
+  // for (String[] elements : lines) {
+  // try {
+  // if (elements.length == 2) {
+  // ipMap.put(elements[0], elements[1]);
+  // }
+  // } catch (Exception e) {
+  // e.printStackTrace();
+  // }
+  // }
+  // return ipMap;
+  // }
 
   public List<TCPConnection> getConnectionList() {
     List<TCPConnection> connectionList = new ArrayList<TCPConnection>();
     for (String[] elements : this.lines) {
-      try {
-        TCPConnection connection = new TCPConnection(elements, this.startTime, this.network);
-        connectionList.add(connection);
-      } catch (Exception e) {
-        e.printStackTrace();
+      if (elements[0].startsWith("#") || elements[8].equals("-")) {
+        continue;
+      } else {
+        try {
+          TCPConnection connection = new TCPConnection(elements, this.network);
+          connectionList.add(connection);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
     return connectionList;

@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import types.Packet;
 import types.TCPConnection;
 
+//import logParsers.ConnectionFeatureExtractor;
+
 public class runner {
   public static void main(String[] args) {
     Connection con = null;
@@ -26,84 +28,86 @@ public class runner {
     String user = "xiaohua";
     String password = "onefish";
 
-    String splitter = "\",\"";
+//    String splitter = "\",\"";
+    
+    String connSplitter = "\t";
+//    String packetSplitter = "\",\"";
+    
 
     try {
       con = DriverManager.getConnection(url, user, password);
       // get the conversation list of bprd network
-      CSVFileReader packetFile = new CSVFileReader("data/bprd-7315-packets.csv", splitter,
-              null, null);
-      CSVFileReader connFile = new CSVFileReader("data/bprd-7315-conversations.csv", splitter,
-              packetFile.startTime, "bprd");
-
+      CSVFileReader connFile = new CSVFileReader("data/bprd1/conn.log", connSplitter, "bprd");
+      CSVFileReader fileAccess = new CSVFileReader("data/bprd1/files.log", connSplitter, null);
+      
       List<TCPConnection> bprdConns = connFile.getConnectionList();
-
-      // get the conversation list of bprd network
-      packetFile = new CSVFileReader("data/colo-3728-packets.csv", splitter, null, null);
-      connFile = new CSVFileReader("data/colo-3728-conversations.csv", splitter,
-              packetFile.startTime, "colo");
-      List<TCPConnection> coloConns_1 = connFile.getConnectionList();
-
-      packetFile = new CSVFileReader("data/colo-3728-packets1.csv", splitter, null, null);
-      connFile = new CSVFileReader("data/colo-3728-conversations1.csv", splitter,
-              packetFile.startTime, "colo");
-      List<TCPConnection> coloConns_2 = connFile.getConnectionList();
-      List<TCPConnection> coloConns = new ArrayList<TCPConnection>();
-      coloConns.addAll(coloConns_1);
-      coloConns.addAll(coloConns_2);
       
       
-      // get the conversation list of trunk network
-      packetFile = new CSVFileReader("data/trunk-3728-packets.csv", splitter, null, null);
-      connFile = new CSVFileReader("data/trunk-3728-conversations.csv", splitter,
-              packetFile.startTime, "trunk");
-      List<TCPConnection> trunkConns_1 = connFile.getConnectionList();
-
-      packetFile = new CSVFileReader("data/trunk-3728-packets1.csv", splitter, null, null);
-      connFile = new CSVFileReader("data/trunk-3728-conversations1.csv", splitter,
-              packetFile.startTime, "trunk");
-      List<TCPConnection> trunkConns_2 = connFile.getConnectionList();
-      Collections.sort(trunkConns_2);
-//      List<ArrayList<Packet>> coveredPackets = new ArrayList<ArrayList<Packet>>();
-//      long t1 = System.nanoTime();
-//      for (int i = 0; i < 10; i++){
-//        ArrayList<Packet> packetsIncluded = trunkConns_2.get(i).getCoveredPackets(con);
-//        coveredPackets.add(packetsIncluded);
-//      }
-//      long t2 = System.nanoTime();
-//      System.out.println((t2 - t1) * 1E-9);
-//      System.out.println(coveredPackets.get(1).size());
-//      int index = 1;
-//      for (TCPConnection conn: trunkConns_2){
-//        ArrayList<Packet> packetsIncluded = conn.getCoveredPackets(con);
-//        System.out.println(index++);
-//        coveredPackets.add(packetsIncluded);
-//      }
-      List<TCPConnection> trunkConns = new ArrayList<TCPConnection>();
-      trunkConns.addAll(trunkConns_1);
-      trunkConns.addAll(trunkConns_2);
-      
-      // sort the conversation lists
-      Collections.sort(trunkConns);
-      Collections.sort(coloConns);
       Collections.sort(bprdConns);
+//      List<ArrayList<Packet>> coveredPackets = new ArrayList<ArrayList<Packet>>();
       
-      // get the overall conversation list
-      List<TCPConnection> allConns = new ArrayList<TCPConnection>();
-      allConns.addAll(bprdConns);
-      allConns.addAll(coloConns);
-      allConns.addAll(trunkConns);
-      Collections.sort(allConns);
+//      int index = 1;
+      long t1 = System.nanoTime();
+      for (int i = 0; i < bprdConns.size(); i++) {
+        TCPConnection targetConn = bprdConns.get(i);
+        targetConn.getCoveredPackets(con);
+        List<TCPConnection> connWindow = getConnectionWindow(bprdConns, targetConn, i);
+        ConnectionFeatureExtractor featureExtractor = new ConnectionFeatureExtractor(targetConn, connWindow);
+        featureExtractor.getUrgentCount();
+        featureExtractor.getSameHostFeatures();
+        featureExtractor.getSameServiceFeatures();
+      }      
+      long t2 = System.nanoTime();
+      System.out.println((t2-t1) * 1E-9);
       
-      System.out.println("size of bprd conns:" + bprdConns.size());
-      System.out.println("size of colo conns:" + coloConns.size());
-      System.out.println("size of trunk conns:" + trunkConns.size());
-      System.out.println("number of all connections:" + (bprdConns.size()+coloConns.size()+trunkConns.size()));
       
-//      for (TCPConnection conn: allConns){
-//        System.out.println(conn.startTime + "\t" + conn.network);
-//      }
       
+//      // get the conversation list of colo network
+//      packetFile = new CSVFileReader("data/colo-3728-packets.csv", splitter, null, null);
+//      connFile = new CSVFileReader("data/colo-3728-conversations.csv", splitter,
+//              packetFile.startTime, "colo");
+//      List<TCPConnection> coloConns_1 = connFile.getConnectionList();
+//
+//      packetFile = new CSVFileReader("data/colo-3728-packets1.csv", splitter, null, null);
+//      connFile = new CSVFileReader("data/colo-3728-conversations1.csv", splitter,
+//              packetFile.startTime, "colo");
+//      List<TCPConnection> coloConns_2 = connFile.getConnectionList();
+//      List<TCPConnection> coloConns = new ArrayList<TCPConnection>();
+//      coloConns.addAll(coloConns_1);
+//      coloConns.addAll(coloConns_2);
+//
+//      // get the conversation list of trunk network
+//      packetFile = new CSVFileReader("data/trunk-3728-packets.csv", splitter, null, null);
+//      connFile = new CSVFileReader("data/trunk-3728-conversations.csv", splitter,
+//              packetFile.startTime, "trunk");
+//      List<TCPConnection> trunkConns_1 = connFile.getConnectionList();
+//
+//      packetFile = new CSVFileReader("data/trunk-3728-packets1.csv", splitter, null, null);
+//      connFile = new CSVFileReader("data/trunk-3728-conversations1.csv", splitter,
+//              packetFile.startTime, "trunk");
+//      List<TCPConnection> trunkConns_2 = connFile.getConnectionList();
+//      List<TCPConnection> trunkConns = new ArrayList<TCPConnection>();
+//      trunkConns.addAll(trunkConns_1);
+//      trunkConns.addAll(trunkConns_2);
+//
+//      // sort the conversation lists
+//      Collections.sort(trunkConns);
+//      Collections.sort(coloConns);
+//      Collections.sort(bprdConns);
+//
+//      // get the overall conversation list
+//      List<TCPConnection> allConns = new ArrayList<TCPConnection>();
+//      allConns.addAll(bprdConns);
+//      allConns.addAll(coloConns);
+//      allConns.addAll(trunkConns);
+//      Collections.sort(allConns);
+//
+//      System.out.println("size of bprd conns:" + bprdConns.size());
+//      System.out.println("size of colo conns:" + coloConns.size());
+//      System.out.println("size of trunk conns:" + trunkConns.size());
+//      System.out.println("number of all connections:"
+//              + (bprdConns.size() + coloConns.size() + trunkConns.size()));
+
     } catch (SQLException ex) {
       Logger lgr = Logger.getLogger(runner.class.getName());
       lgr.log(Level.SEVERE, ex.getMessage(), ex);
@@ -125,8 +129,17 @@ public class runner {
         lgr.log(Level.WARNING, ex.getMessage(), ex);
       }
     }
-    // for (Map.Entry<String, String> entry: ipMap.entrySet()) {
-    // System.out.println(entry.getKey() + "\t" + entry.getValue());
-    // }
+  }
+
+  private static List<TCPConnection> getConnectionWindow(List<TCPConnection> allConns,
+          TCPConnection conn, int index) {
+    double startTime = conn.startTime;
+    List<TCPConnection> result = new ArrayList<TCPConnection>();
+    for (int i = 0; i< index;i++){
+      if (allConns.get(i).startTime >= startTime-2){
+        result.add(allConns.get(i));
+      }
+    }
+    return result;
   }
 }
