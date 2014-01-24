@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import types.Packet;
+import types.FTPCommand;
+import types.FileAccess;
 import types.TCPConnection;
 
 public class CSVFileReader {
@@ -59,20 +57,6 @@ public class CSVFileReader {
     this.lines = result;
   }
 
-  // public HashMap<String, String> readIpKeyMap(List<String[]> lines) {
-  // HashMap<String, String> ipMap = new HashMap<String, String>();
-  // for (String[] elements : lines) {
-  // try {
-  // if (elements.length == 2) {
-  // ipMap.put(elements[0], elements[1]);
-  // }
-  // } catch (Exception e) {
-  // e.printStackTrace();
-  // }
-  // }
-  // return ipMap;
-  // }
-
   public List<TCPConnection> getConnectionList() {
     List<TCPConnection> connectionList = new ArrayList<TCPConnection>();
     for (String[] elements : this.lines) {
@@ -90,4 +74,37 @@ public class CSVFileReader {
     return connectionList;
   }
 
+  public List<FileAccess> getFileAccessList() {
+    List<FileAccess> result = new ArrayList<FileAccess>();
+    for (String[] elements : this.lines) {
+      if (elements[0].startsWith("#")) {
+        continue;
+      } else {
+        try {
+          FileAccess fileAccess = new FileAccess(elements);
+          result.add(fileAccess);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<FTPCommand> getFTPCmdList() {
+    List<FTPCommand> result = new ArrayList<FTPCommand>();
+    for (String[] elements : this.lines) {
+      if (elements[0].startsWith("#")) {
+        continue;
+      } else {
+        try {
+          FTPCommand ftpCmd = new FTPCommand(elements);
+          result.add(ftpCmd);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return result;
+  }
 }
